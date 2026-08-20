@@ -31,11 +31,11 @@
     --mx:50%; --my:30%;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;overflow-x:hidden;}
   body{
     background:var(--bg);color:var(--ink);
     font-family:var(--body);line-height:1.55;
-    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
   }
   @media(hover:hover) and (pointer:fine){body,a,button{cursor:none;}}
   a{color:inherit;text-decoration:none;}
@@ -430,7 +430,7 @@
   .foot-wordmark{
     font-family:var(--display);font-weight:700;
     font-size:clamp(56px,16vw,220px);letter-spacing:-6px;line-height:0.85;
-    text-align:center;margin:0;
+    text-align:center;margin:0;overflow-wrap:break-word;
     background:linear-gradient(180deg,var(--ink) 0%,var(--ink-faint) 100%);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
     background-size:100% 200%;animation:wordmarkShift 8s ease-in-out infinite;
@@ -455,23 +455,243 @@
     .eyebrow .caret{animation:none;}
     .logo .dot{animation:none;}
   }
-.pricing-callout{
-  margin-top:32px;padding:24px 28px;
-  background:var(--accent-soft);border:1px solid var(--accent);
-  border-radius:8px;display:flex;flex-direction:column;gap:10px;
-}
-.callout-head{
-  font-family:var(--mono);font-size:11px;color:var(--accent);
-  letter-spacing:2px;text-transform:uppercase;font-weight:600;
-}
-.callout-body{
-  font-size:14px;color:var(--ink-dim);line-height:1.65;
-}
-.callout-body b{color:var(--ink);font-weight:500;}
-@media(max-width:520px){
-  .pricing-callout{padding:20px;}
-  .callout-body{font-size:13px;}
-}
+
+  /* === Pricing callout === */
+  .pricing-callout{
+    margin-top:32px;padding:24px 28px;
+    background:var(--accent-soft);border:1px solid var(--accent);
+    border-radius:8px;display:flex;flex-direction:column;gap:10px;
+  }
+  .callout-head{
+    font-family:var(--mono);font-size:11px;color:var(--accent);
+    letter-spacing:2px;text-transform:uppercase;font-weight:600;
+  }
+  .callout-body{
+    font-size:14px;color:var(--ink-dim);line-height:1.65;
+  }
+  .callout-body b{color:var(--ink);font-weight:500;}
+  @media(max-width:520px){
+    .pricing-callout{padding:20px;}
+    .callout-body{font-size:13px;}
+  }
+
+  .calc-inline{
+    display:inline-flex;align-items:center;gap:6px;
+    background:none;border:none;color:var(--accent);
+    font-family:var(--mono);font-size:11px;letter-spacing:1px;
+    text-transform:uppercase;cursor:pointer;margin-top:12px;
+    transition:gap .2s;
+  }
+  .calc-inline:hover{gap:10px;}
+
+  /* === Calculator FAB + Modal === */
+  .calc-fab{
+    position:fixed;bottom:24px;right:24px;z-index:45;
+    width:56px;height:56px;border-radius:50%;
+    background:var(--accent);border:1px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .25s;
+    box-shadow:0 8px 24px rgba(168,85,247,0.4);
+  }
+  .calc-fab:hover{background:var(--cyan);border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 12px 32px rgba(192,132,252,0.5);}
+  .calc-fab svg{width:24px;height:24px;color:var(--bg);}
+  .calc-fab .fab-label{
+    position:absolute;right:64px;top:50%;transform:translateY(-50%);
+    background:var(--panel);border:1px solid var(--line);border-radius:4px;
+    padding:6px 12px;font-family:var(--mono);font-size:11px;color:var(--ink);
+    white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .calc-fab:hover .fab-label{opacity:1;}
+  @media(max-width:520px){
+    .calc-fab{bottom:20px;right:20px;width:52px;height:52px;}
+    .calc-fab .fab-label{display:none;}
+  }
+
+  .calc-modal{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(11,8,19,0.85);backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .calc-modal.open{opacity:1;pointer-events:auto;}
+  .calc-card{
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:12px;
+    width:100%;max-width:900px;max-height:88vh;display:flex;flex-direction:column;
+    position:relative;transform:translateY(20px);transition:transform .25s;
+    overflow:hidden;
+  }
+  .calc-modal.open .calc-card{transform:translateY(0);}
+  .calc-card::before,.calc-card::after{
+    content:'';position:absolute;width:14px;height:14px;border:1px solid var(--accent);z-index:2;
+  }
+  .calc-card::before{top:-1px;left:-1px;border-right:none;border-bottom:none;}
+  .calc-card::after{bottom:-1px;right:-1px;border-left:none;border-top:none;}
+
+  .calc-header{
+    padding:20px 28px;border-bottom:1px solid var(--line-soft);
+    display:flex;justify-content:space-between;align-items:flex-start;flex:none;
+  }
+  .calc-header h3{
+    font-family:var(--display);font-size:22px;font-weight:600;
+    color:var(--ink);letter-spacing:-.5px;margin:0 0 4px;
+  }
+  .calc-header .sub{
+    font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.5px;
+  }
+  .calc-close{
+    background:none;border:1px solid var(--line);color:var(--ink-dim);
+    width:32px;height:32px;border-radius:4px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;line-height:1;transition:all .2s;flex:none;
+  }
+  .calc-close:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* House call topbar */
+  .calc-topbar{
+    padding:14px 28px;border-bottom:1px solid var(--line-soft);
+    background:var(--panel);flex:none;
+  }
+  .calc-topbar .calc-toggle{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0;border-top:none;margin-top:0;
+  }
+  .calc-topbar .calc-toggle .label{font-size:13px;color:var(--ink);}
+  .calc-topbar .calc-toggle .label .sub{
+    display:block;font-family:var(--mono);font-size:10px;color:var(--ink-faint);
+    margin-top:2px;letter-spacing:.3px;
+  }
+  .calc-switch{
+    width:44px;height:24px;background:var(--line);border-radius:12px;
+    position:relative;cursor:pointer;transition:background .2s;flex:none;
+  }
+  .calc-switch::after{
+    content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;
+    background:var(--ink);border-radius:50%;transition:transform .2s;
+  }
+  .calc-switch.on{background:var(--accent);}
+  .calc-switch.on::after{transform:translateX(20px);background:var(--bg);}
+
+  /* Two-panel layout */
+  .calc-panels{
+    flex:1;display:flex;overflow:hidden;min-height:0;
+  }
+  .calc-body{
+    flex:1;overflow-y:auto;padding:18px 28px;border-right:1px solid var(--line-soft);
+  }
+  .calc-side{
+    width:320px;flex:none;padding:18px 24px;
+    background:var(--panel);display:flex;flex-direction:column;overflow-y:auto;
+  }
+
+  .calc-category{
+    font-family:var(--mono);font-size:10px;color:var(--ink-faint);
+    letter-spacing:1.5px;text-transform:uppercase;
+    margin:14px 0 8px;padding-bottom:8px;border-bottom:1px solid var(--line-soft);
+  }
+  .calc-category:first-child{margin-top:0;}
+  .calc-item{
+    display:flex;align-items:center;gap:12px;padding:9px 0;cursor:pointer;transition:padding .2s;
+  }
+  .calc-item:hover{padding-left:4px;}
+  .calc-item input{display:none;}
+  .calc-item .box{
+    width:18px;height:18px;border:1px solid var(--line);border-radius:3px;
+    flex:none;display:flex;align-items:center;justify-content:center;transition:all .2s;
+  }
+  .calc-item input:checked + .box{background:var(--accent);border-color:var(--accent);}
+  .calc-item input:checked + .box::after{
+    content:'';width:5px;height:9px;border:solid var(--bg);
+    border-width:0 2px 2px 0;transform:rotate(45deg);margin-top:-2px;
+  }
+  .calc-item .name{flex:1;font-size:13px;color:var(--ink-dim);transition:color .2s;}
+  .calc-item input:checked ~ .name{color:var(--ink);}
+  .calc-item .price{font-family:var(--mono);font-size:12px;color:var(--ink-faint);font-weight:600;}
+  .calc-item input:checked ~ .price{color:var(--accent);}
+
+  .calc-tip{
+    font-family:var(--mono);font-size:10px;color:var(--ok);
+    margin:10px 0;padding:10px 12px;background:var(--ok-soft);
+    border:1px solid rgba(56,189,248,0.25);border-radius:4px;letter-spacing:.3px;
+    display:none;
+  }
+
+  /* Right panel content */
+  .calc-breakdown{font-family:var(--mono);font-size:11px;margin-bottom:14px;}
+  .calc-breakdown .row{
+    display:flex;justify-content:space-between;gap:8px;padding:3px 0;color:var(--ink-dim);
+  }
+  .calc-breakdown .row span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .calc-breakdown .row.waived{color:var(--ok);}
+  .calc-breakdown .row.total{
+    border-top:1px solid var(--line-soft);margin-top:8px;padding-top:10px;
+    font-size:13px;font-weight:700;color:var(--ink);
+  }
+  .calc-breakdown .row.total span:first-child{white-space:normal;}
+  .calc-breakdown .row.total .amount{color:var(--accent);font-size:20px;font-weight:700;}
+
+  .calc-message{
+    margin:0 0 14px;padding:12px 14px;
+    background:var(--bg);border:1px solid var(--line);border-radius:6px;position:relative;
+  }
+  .msg-label{
+    font-family:var(--mono);font-size:9px;color:var(--ink-faint);
+    letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;
+  }
+  .msg-text{
+    font-family:var(--mono);font-size:10px;color:var(--ink-dim);
+    line-height:1.6;word-break:break-word;padding-right:56px;
+  }
+  .msg-copy{
+    position:absolute;top:8px;right:8px;
+    background:var(--panel-2);border:1px solid var(--line);color:var(--ink-dim);
+    font-family:var(--mono);font-size:9px;letter-spacing:1px;
+    padding:4px 8px;border-radius:3px;cursor:pointer;transition:all .2s;
+  }
+  .msg-copy:hover{border-color:var(--accent);color:var(--accent);}
+  .msg-copy.copied{background:var(--ok);border-color:var(--ok);color:var(--bg);}
+
+  .calc-cta{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;padding:14px;border-radius:6px;
+    background:var(--accent);color:var(--bg);border:1px solid var(--accent);
+    font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:1px;
+    text-transform:uppercase;cursor:pointer;transition:all .2s;
+    margin-top:auto;
+  }
+  .calc-cta:hover{background:var(--cyan);border-color:var(--cyan);}
+  .calc-cta .arrow{transition:transform .2s;}
+  .calc-cta:hover .arrow{transform:translateX(4px);}
+
+  /* Mobile: stack panels */
+  @media(max-width:767px){
+    .calc-card{max-width:100%;max-height:92vh;border-radius:8px;}
+    .calc-panels{flex-direction:column;}
+    .calc-body{
+      border-right:none;border-bottom:1px solid var(--line-soft);
+      padding:14px 20px;flex:1;min-height:200px;
+    }
+    .calc-side{
+      width:100%;padding:14px 20px;max-height:42vh;flex:none;
+    }
+  }
+  @media(max-width:520px){
+    .calc-header{padding:18px 20px;}
+    .calc-topbar{padding:12px 20px;}
+    .calc-body{padding:12px 20px;}
+    .calc-side{padding:12px 20px;max-height:40vh;}
+    .calc-breakdown .row.total .amount{font-size:18px;}
+    .calc-header h3{font-size:18px;}
+  }
+  /* Very short landscape phones */
+  @media(max-height:500px) and (orientation:landscape){
+    .calc-card{max-height:96vh;}
+    .calc-header{padding:12px 24px;}
+    .calc-header h3{font-size:18px;margin:0;}
+    .calc-header .sub{display:none;}
+    .calc-topbar{padding:10px 24px;}
+    .calc-body{padding:12px 24px;}
+    .calc-side{padding:12px 20px;}
+  }
 </style>
 </head>
 <body>
@@ -546,13 +766,14 @@
       <div class="section-count">04 categories</div>
     </div>
     <div class="services-grid" id="servicesGrid"></div>
-<div class="pricing-callout reveal">
-  <div class="callout-head">// How pricing works</div>
-  <div class="callout-body">
-    <b>Service price</b> + <b>travel fee</b> (if house call) = your total.<br>
-    Diagnostic fee is <b style="color:var(--ok)">waived if you proceed with repair</b>. No surprise add-ons.
-  </div>
-</div>
+    <div class="pricing-callout reveal">
+      <div class="callout-head">// How pricing works</div>
+      <div class="callout-body">
+        <b>Service price</b> + <b>travel fee</b> (if house call) = your total.<br>
+        Diagnostic fee is <b style="color:var(--ok)">waived if you proceed with repair</b>. No surprise add-ons.
+      </div>
+    </div>
+    <button class="calc-inline reveal" id="calcInline" data-cursor>→ Open cost calculator</button>
   </div>
 </section>
 
@@ -616,11 +837,11 @@
           <div class="amount">₱150</div>
           <div class="note">Flat fee within Dasmariñas. Covers travel to and from your location.</div>
         </div>
-<div class="fee-block reveal reveal-d1" data-cursor>
-  <div class="label">Minimum Job Charge</div>
-  <div class="amount">₱150</div>
-  <div class="note">The smallest any job can cost, covers tiny one-off fixes. Service prices already above this are unaffected.</div>
-</div>
+        <div class="fee-block reveal reveal-d1" data-cursor>
+          <div class="label">Minimum Job Charge</div>
+          <div class="amount">₱150</div>
+          <div class="note">The smallest any job can cost, covers tiny one-off fixes. Service prices already above this are unaffected.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -679,6 +900,56 @@
     </div>
   </div>
 </footer>
+
+<!-- Calculator FAB -->
+<button class="calc-fab" id="calcFab" data-cursor aria-label="Open cost calculator">
+  <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="2" width="16" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+    <rect x="7" y="5" width="10" height="3"/>
+    <rect x="7" y="10" width="2" height="2"/>
+    <rect x="11" y="10" width="2" height="2"/>
+    <rect x="15" y="10" width="2" height="2"/>
+    <rect x="7" y="14" width="2" height="2"/>
+    <rect x="11" y="14" width="2" height="2"/>
+    <rect x="15" y="14" width="2" height="2"/>
+    <rect x="7" y="18" width="2" height="2"/>
+    <rect x="11" y="18" width="6" height="2"/>
+  </svg>
+  <span class="fab-label">Estimate cost</span>
+</button>
+
+<!-- Calculator Modal -->
+<div class="calc-modal" id="calcModal" role="dialog" aria-label="Cost calculator">
+  <div class="calc-card">
+    <div class="calc-header">
+      <div>
+        <h3>Cost Calculator</h3>
+        <div class="sub">// Estimate before you message</div>
+      </div>
+      <button class="calc-close" id="calcClose" aria-label="Close calculator">✕</button>
+    </div>
+    <div class="calc-topbar">
+      <div class="calc-toggle">
+        <div class="label">House call within Dasmariñas<span class="sub">adds ₱150 travel fee</span></div>
+        <div class="calc-switch" id="houseCallToggle" data-cursor></div>
+      </div>
+    </div>
+    <div class="calc-panels">
+      <div class="calc-body" id="calcBody"></div>
+      <div class="calc-side">
+        <div class="calc-breakdown" id="calcBreakdown"></div>
+        <div class="calc-message" id="calcMessage" style="display:none;">
+          <div class="msg-label">// Suggested message — copy this</div>
+          <div class="msg-text" id="calcMsgText"></div>
+          <button class="msg-copy" id="msgCopy" data-cursor>COPY</button>
+        </div>
+        <a href="https://facebook.com/msixoi" target="_blank" rel="noopener" class="calc-cta" id="calcCta" data-cursor>
+          Message on Facebook <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -826,6 +1097,185 @@
   }
   window.addEventListener('scroll', updateProgress, { passive: true });
   updateProgress();
+
+  /* === Cost Calculator === */
+  const calcServices = [
+    { id:'basic-care', name:'Basic Care', price:300, cat:'PC Maintenance' },
+    { id:'deep-care', name:'Deep Care (Desktop)', price:500, cat:'PC Maintenance' },
+    { id:'extreme-refresh', name:'Extreme Refresh', price:650, cat:'PC Maintenance' },
+    { id:'thermal-paste', name:'Thermal Paste Replacement', price:250, cat:'PC Maintenance' },
+    { id:'os-reinstall', name:'OS Reinstall & Setup', price:250, cat:'System Services' },
+    { id:'diagnostic', name:'Diagnostic & Troubleshooting', price:250, cat:'System Services', isDiagnostic:true },
+    { id:'bundle-basic-os', name:'Bundle: Basic Care + OS Reinstall', price:500, cat:'System Services', isBundle:true },
+    { id:'ram-ssd-hdd', name:'RAM / SSD / HDD', price:100, cat:'Component Installation' },
+    { id:'gpu', name:'GPU', price:150, cat:'Component Installation' },
+    { id:'cpu', name:'CPU', price:150, cat:'Component Installation' },
+    { id:'psu', name:'PSU', price:150, cat:'Component Installation' },
+    { id:'motherboard', name:'Motherboard', price:250, cat:'Component Installation' },
+    { id:'cpu-motherboard', name:'CPU + Motherboard', price:350, cat:'Component Installation' },
+    { id:'full-rebuild', name:'Full Upgrade / Rebuild', price:500, priceMax:700, cat:'Component Installation' },
+    { id:'driver-troubleshoot', name:'Driver Troubleshooting', price:150, cat:'Other Services' },
+    { id:'windows-optimize', name:'Windows Optimization', price:150, cat:'Other Services' },
+    { id:'bloatware', name:'Bloatware Cleanup', price:100, cat:'Other Services' },
+    { id:'bios-update', name:'BIOS Update', price:200, cat:'Other Services' },
+    { id:'data-backup', name:'Data Backup / Transfer', price:150, isPlus:true, cat:'Other Services' }
+  ];
+
+  const calcBody = document.getElementById('calcBody');
+  let currentCat = '';
+  calcServices.forEach(s => {
+    if (s.cat !== currentCat) {
+      currentCat = s.cat;
+      const catEl = document.createElement('div');
+      catEl.className = 'calc-category';
+      catEl.textContent = '// ' + currentCat;
+      calcBody.appendChild(catEl);
+    }
+    const priceLabel = s.priceMax ? `₱${s.price}–${s.priceMax}` : (s.isPlus ? `₱${s.price}+` : `₱${s.price}`);
+    const item = document.createElement('label');
+    item.className = 'calc-item';
+    item.innerHTML = `
+      <input type="checkbox" data-id="${s.id}">
+      <span class="box"></span>
+      <span class="name">${s.name}</span>
+      <span class="price">${priceLabel}</span>
+    `;
+    calcBody.appendChild(item);
+  });
+
+  const tipEl = document.createElement('div');
+  tipEl.className = 'calc-tip';
+  tipEl.id = 'calcTip';
+  calcBody.appendChild(tipEl);
+
+  const calcModal = document.getElementById('calcModal');
+  const calcFab = document.getElementById('calcFab');
+  const calcInline = document.getElementById('calcInline');
+  const calcClose = document.getElementById('calcClose');
+  const breakdown = document.getElementById('calcBreakdown');
+  const calcMessage = document.getElementById('calcMessage');
+  const calcMsgText = document.getElementById('calcMsgText');
+  const houseCallToggle = document.getElementById('houseCallToggle');
+  const msgCopy = document.getElementById('msgCopy');
+
+  let houseCall = false;
+  houseCallToggle.addEventListener('click', () => {
+    houseCall = !houseCall;
+    houseCallToggle.classList.toggle('on', houseCall);
+    updateCalc();
+  });
+
+  function updateCalc() {
+    const checked = Array.from(calcBody.querySelectorAll('input[type=checkbox]:checked'))
+      .map(cb => calcServices.find(s => s.id === cb.dataset.id));
+
+    const hasBasic = checked.some(s => s.id === 'basic-care');
+    const hasOS = checked.some(s => s.id === 'os-reinstall');
+    const hasBundle = checked.some(s => s.id === 'bundle-basic-os');
+    const tip = document.getElementById('calcTip');
+    if (hasBasic && hasOS && !hasBundle) {
+      tip.style.display = 'block';
+      tip.textContent = '// Tip: Select the Bundle (Basic Care + OS Reinstall) instead to save ₱50';
+    } else if (hasBundle && (hasBasic || hasOS)) {
+      tip.style.display = 'block';
+      tip.textContent = '// Note: Bundle already includes Basic Care + OS Reinstall — uncheck the individual ones';
+    } else {
+      tip.style.display = 'none';
+    }
+
+    let subtotal = 0;
+    let diagnosticSelected = false;
+    let hasRepair = false;
+
+    checked.forEach(s => {
+      if (s.isDiagnostic) {
+        diagnosticSelected = true;
+      } else {
+        subtotal += s.price;
+        hasRepair = true;
+      }
+    });
+
+    const diagnosticFee = (diagnosticSelected && !hasRepair) ? 250 : 0;
+    const diagnosticWaived = diagnosticSelected && hasRepair;
+
+    const preMin = subtotal + diagnosticFee;
+    const minAdjust = (preMin > 0 && preMin < 150) ? (150 - preMin) : 0;
+
+    const callOut = houseCall ? 150 : 0;
+    const total = preMin + minAdjust + callOut;
+
+    let html = '';
+    if (checked.length === 0) {
+      html = '<div class="row" style="color:var(--ink-faint);"><span>Select services to estimate</span><span>₱0</span></div>';
+    } else {
+      checked.forEach(s => {
+        if (s.isDiagnostic && diagnosticWaived) {
+          html += `<div class="row waived"><span>${s.name}</span><span>WAIVED</span></div>`;
+        } else if (s.isDiagnostic) {
+          html += `<div class="row"><span>${s.name}</span><span>₱${s.price}</span></div>`;
+        } else if (s.priceMax) {
+          html += `<div class="row"><span>${s.name}</span><span>₱${s.price}–${s.priceMax}</span></div>`;
+        } else {
+          html += `<div class="row"><span>${s.name}</span><span>₱${s.price}</span></div>`;
+        }
+      });
+      if (minAdjust > 0) {
+        html += `<div class="row"><span>Minimum job charge adjustment</span><span>+₱${minAdjust}</span></div>`;
+      }
+      if (callOut > 0) {
+        html += `<div class="row"><span>Call-out fee (house service)</span><span>+₱${callOut}</span></div>`;
+      }
+    }
+    html += `<div class="row total"><span>ESTIMATED TOTAL</span><span class="amount">₱${total}</span></div>`;
+    breakdown.innerHTML = html;
+
+    if (checked.length > 0) {
+      const list = checked.map(s => s.name).join(', ');
+      const parts = [`Hi Ahren! I'd like to book: ${list}`];
+      if (houseCall) parts.push('house call within Dasmariñas');
+      else parts.push('drop-off');
+      parts.push(`Estimated total: ₱${total}`);
+      calcMsgText.textContent = parts.join(' — ');
+      calcMessage.style.display = 'block';
+    } else {
+      calcMessage.style.display = 'none';
+    }
+  }
+
+  function openCalc() {
+    calcModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    updateCalc();
+  }
+  function closeCalc() {
+    calcModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  calcFab.addEventListener('click', openCalc);
+  if (calcInline) calcInline.addEventListener('click', openCalc);
+  calcClose.addEventListener('click', closeCalc);
+  calcModal.addEventListener('click', (e) => { if (e.target === calcModal) closeCalc(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && calcModal.classList.contains('open')) closeCalc(); });
+
+  msgCopy.addEventListener('click', async () => {
+    const text = calcMsgText.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      msgCopy.textContent = 'COPIED ✓';
+      msgCopy.classList.add('copied');
+      setTimeout(() => { msgCopy.textContent = 'COPY'; msgCopy.classList.remove('copied'); }, 2000);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      msgCopy.textContent = 'COPIED ✓'; msgCopy.classList.add('copied');
+      setTimeout(() => { msgCopy.textContent = 'COPY'; msgCopy.classList.remove('copied'); }, 2000);
+    }
+  });
+
+  calcBody.addEventListener('change', updateCalc);
+  updateCalc();
 </script>
 </body>
 </html>
