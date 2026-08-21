@@ -956,7 +956,7 @@
   const canHover = window.matchMedia('(hover: hover)').matches;
 
   /* === Marquee === */
-  const marqueeWords = ['BASIC CARE', 'DEEP CARE', 'OS REINSTALL', 'THERMAL PASTE', 'TROUBLESHOOTING', 'COMPONENT INSTALL', 'BIOS UPDATE', 'BUNDLE DEALS'];
+  const marqueeWords = ['BASIC CARE', 'DEEP CARE', 'OS REFURBISH', 'TROUBLESHOOTING', 'COMPONENT INSTALL', 'BUNDLE DEALS', 'EXTREME REFRESH', 'DIAGNOSTICS'];
   const marqueeTrack = document.getElementById('marqueeTrack');
   function buildMarquee(){
     let html = '';
@@ -975,40 +975,32 @@
     {
       num: '01', title: 'PC Maintenance', desc: 'Cleaning & care',
       items: [
-        { name: 'Basic Care', price: '₱300', note: 'Routine cleaning, basic inspection, cable tidy & health check' },
-        { name: 'Deep Care (Desktop)', price: '₱500', note: 'Thorough cleaning, CPU repaste, cable management & testing' },
-        { name: 'Extreme Refresh', price: '₱650', note: 'For heavily dusty / neglected systems' },
-        { name: 'Thermal Paste Replacement', price: '₱250', note: 'Includes high-quality thermal paste & professional application' }
+        { name: 'Basic Care', price: '₱300', note: 'External cleaning, basic internal dusting, cable tidy & health check' },
+        { name: 'Deep Care', price: '₱500', note: 'Full disassembly, thorough deep clean, CPU thermal paste replacement, cable management & testing' },
+        { name: 'Extreme Refresh', price: '₱650', note: 'For heavily dusty / neglected systems requiring extended labor' }
       ]
     },
     {
       num: '02', title: 'System Services', desc: 'OS & diagnostics',
       items: [
-        { name: 'OS Reinstall & Setup', price: '₱250', note: 'Clean installation, drivers, updates, and basic optimization' },
-        { name: 'Diagnostic & Troubleshooting', price: '₱250', note: 'Inspect, test & identify issues, waived if repair proceeds' },
-        { bundle: true, name: 'Bundle: Basic Care + OS Reinstall', price: '₱500', note: 'Combo offer — save ₱50' }
+        { name: 'OS Reinstall & Refurbish', price: '₱250', note: 'Clean Windows installation, driver updates, BIOS update, and complete bloatware removal' },
+        { name: 'Diagnostic & Troubleshooting', price: '₱250', note: 'Inspect, test & identify issues. Fee is waived if customer proceeds with the repair' },
+        { bundle: true, name: 'Bundle: Basic Care + OS Refurbish', price: '₱500', note: 'Combo offer — save ₱50' }
       ]
     },
     {
       num: '03', title: 'Component Installation', desc: 'Hardware swaps',
       items: [
-        { name: 'RAM / SSD / HDD', price: '₱100' },
-        { name: 'GPU', price: '₱150' },
-        { name: 'CPU', price: '₱150' },
-        { name: 'PSU', price: '₱150' },
-        { name: 'Motherboard', price: '₱250' },
-        { name: 'CPU + Motherboard', price: '₱350' },
-        { name: 'Full Upgrade / Rebuild', price: '₱500–700' }
+        { name: 'Basic Component Install', price: '₱150', note: 'RAM / SSD / HDD / GPU / PSU' },
+        { name: 'Advanced Component Install', price: '₱250', note: 'CPU / Motherboard' },
+        { name: 'Full Upgrade / Rebuild', price: '₱500–700', note: 'Swapping multiple parts or transferring system to a new case' }
       ]
     },
     {
       num: '04', title: 'Other Services', desc: 'Misc fixes',
       items: [
-        { name: 'Driver Troubleshooting', price: '₱150' },
-        { name: 'Windows Optimization', price: '₱150' },
-        { name: 'Bloatware Cleanup', price: '₱100' },
-        { name: 'BIOS Update', price: '₱200' },
-        { name: 'Data Backup / Transfer', price: '₱150+' }
+        { name: 'Data Backup / Transfer', price: '₱150+' },
+        { name: 'Driver / Windows Troubleshooting', price: '₱150', note: 'Fixing issues without OS reinstall' }
       ]
     }
   ];
@@ -1101,24 +1093,19 @@
   /* === Cost Calculator === */
   const calcServices = [
     { id:'basic-care', name:'Basic Care', price:300, cat:'PC Maintenance' },
-    { id:'deep-care', name:'Deep Care (Desktop)', price:500, cat:'PC Maintenance' },
+    { id:'deep-care', name:'Deep Care', price:500, cat:'PC Maintenance' },
     { id:'extreme-refresh', name:'Extreme Refresh', price:650, cat:'PC Maintenance' },
-    { id:'thermal-paste', name:'Thermal Paste Replacement', price:250, cat:'PC Maintenance' },
-    { id:'os-reinstall', name:'OS Reinstall & Setup', price:250, cat:'System Services' },
+    
+    { id:'os-refurbish', name:'OS Reinstall & Refurbish', price:250, cat:'System Services' },
     { id:'diagnostic', name:'Diagnostic & Troubleshooting', price:250, cat:'System Services', isDiagnostic:true },
-    { id:'bundle-basic-os', name:'Bundle: Basic Care + OS Reinstall', price:500, cat:'System Services', isBundle:true },
-    { id:'ram-ssd-hdd', name:'RAM / SSD / HDD', price:100, cat:'Component Installation' },
-    { id:'gpu', name:'GPU', price:150, cat:'Component Installation' },
-    { id:'cpu', name:'CPU', price:150, cat:'Component Installation' },
-    { id:'psu', name:'PSU', price:150, cat:'Component Installation' },
-    { id:'motherboard', name:'Motherboard', price:250, cat:'Component Installation' },
-    { id:'cpu-motherboard', name:'CPU + Motherboard', price:350, cat:'Component Installation' },
+    { id:'bundle-basic-os', name:'Bundle: Basic Care + OS Refurbish', price:500, cat:'System Services', isBundle:true },
+    
+    { id:'basic-install', name:'Basic Component Install', price:150, cat:'Component Installation' },
+    { id:'adv-install', name:'Advanced Component Install', price:250, cat:'Component Installation' },
     { id:'full-rebuild', name:'Full Upgrade / Rebuild', price:500, priceMax:700, cat:'Component Installation' },
-    { id:'driver-troubleshoot', name:'Driver Troubleshooting', price:150, cat:'Other Services' },
-    { id:'windows-optimize', name:'Windows Optimization', price:150, cat:'Other Services' },
-    { id:'bloatware', name:'Bloatware Cleanup', price:100, cat:'Other Services' },
-    { id:'bios-update', name:'BIOS Update', price:200, cat:'Other Services' },
-    { id:'data-backup', name:'Data Backup / Transfer', price:150, isPlus:true, cat:'Other Services' }
+    
+    { id:'data-backup', name:'Data Backup / Transfer', price:150, isPlus:true, cat:'Other Services' },
+    { id:'driver-troubleshoot', name:'Driver / Windows Troubleshooting', price:150, cat:'Other Services' }
   ];
 
   const calcBody = document.getElementById('calcBody');
@@ -1170,15 +1157,15 @@
       .map(cb => calcServices.find(s => s.id === cb.dataset.id));
 
     const hasBasic = checked.some(s => s.id === 'basic-care');
-    const hasOS = checked.some(s => s.id === 'os-reinstall');
+    const hasOS = checked.some(s => s.id === 'os-refurbish');
     const hasBundle = checked.some(s => s.id === 'bundle-basic-os');
     const tip = document.getElementById('calcTip');
     if (hasBasic && hasOS && !hasBundle) {
       tip.style.display = 'block';
-      tip.textContent = '// Tip: Select the Bundle (Basic Care + OS Reinstall) instead to save ₱50';
+      tip.textContent = '// Tip: Select the Bundle (Basic Care + OS Refurbish) instead to save ₱50';
     } else if (hasBundle && (hasBasic || hasOS)) {
       tip.style.display = 'block';
-      tip.textContent = '// Note: Bundle already includes Basic Care + OS Reinstall — uncheck the individual ones';
+      tip.textContent = '// Note: Bundle already includes Basic Care + OS Refurbish — uncheck the individual ones';
     } else {
       tip.style.display = 'none';
     }
