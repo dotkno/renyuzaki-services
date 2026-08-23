@@ -430,7 +430,7 @@
   .foot-wordmark{
     font-family:var(--display);font-weight:700;
     font-size:clamp(56px,16vw,220px);letter-spacing:-6px;line-height:0.85;
-    text-align:center;margin:0;overflow-wrap:break-word;
+    text-align:center;margin:0;overflow-wrap:normal;word-break:keep-all;
     background:linear-gradient(180deg,var(--ink) 0%,var(--ink-faint) 100%);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
     background-size:100% 200%;animation:wordmarkShift 8s ease-in-out infinite;
@@ -892,9 +892,9 @@
         <dt>Portfolio</dt><dd><a href="https://renyuzaki.me" target="_blank" rel="noopener" data-cursor>renyuzaki.me</a></dd>
       </dl>
     </div>
-    <h2 class="foot-wordmark">renyuzaki<span class="accent">.</span></h2>
+    <h2 class="foot-wordmark">renyuzaki<span class="accent">.</span><br>services</h2>
     <div class="foot-bottom">
-      <span>© 8-2026 — RENYUZAKI.SERVICES</span>
+      <span>© 2024-25 — RENYUZAKI.SERVICES</span>
       <span>AFFORDABLE · STUDENT-FRIENDLY · HONEST WORK</span>
       <span><a href="https://renyuzaki.me" target="_blank" rel="noopener" data-cursor style="color:var(--ink-dim);">→ portfolio</a></span>
     </div>
@@ -956,7 +956,7 @@
   const canHover = window.matchMedia('(hover: hover)').matches;
 
   /* === Marquee === */
-  const marqueeWords = ['BASIC CARE', 'DEEP CARE', 'OS REFURBISH', 'TROUBLESHOOTING', 'COMPONENT INSTALL', 'BUNDLE DEALS', 'EXTREME REFRESH', 'DIAGNOSTICS'];
+  const marqueeWords = ['BASIC CARE', 'DEEP CARE', 'OS REFRESH', 'DIAGNOSTICS', 'TROUBLESHOOTING', 'COMPONENT INSTALL', 'DATA BACKUP', 'BUNDLE DEALS'];
   const marqueeTrack = document.getElementById('marqueeTrack');
   function buildMarquee(){
     let html = '';
@@ -983,23 +983,24 @@
     {
       num: '02', title: 'System Services', desc: 'OS & diagnostics',
       items: [
-        { name: 'OS Reinstall & Refurbish', price: '₱250', note: 'Clean Windows installation, driver updates, BIOS update, and complete bloatware removal' },
-        { name: 'Diagnostic & Troubleshooting', price: '₱250', note: 'Inspect, test & identify issues. Fee is waived if customer proceeds with the repair' },
-        { bundle: true, name: 'Bundle: Basic Care + OS Refurbish', price: '₱500', note: 'Combo offer — save ₱50' }
+        { name: 'OS Reinstall & Refresh', price: '₱250', note: 'Clean Windows installation, driver updates, BIOS update, and complete bloatware removal' },
+        { name: 'Diagnostic & Troubleshooting', price: '₱250', note: 'Inspect, test & identify issues, waived if repair proceeds' },
+        { bundle: true, name: 'Bundle: Basic Care + OS Refresh', price: '₱500', note: 'Combo offer — save ₱50' }
       ]
     },
     {
       num: '03', title: 'Component Installation', desc: 'Hardware swaps',
       items: [
         { name: 'Basic Component Install', price: '₱150', note: 'RAM / SSD / HDD / GPU / PSU' },
-        { name: 'Advanced Component Install', price: '₱250', note: 'CPU / Motherboard' },
-        { name: 'Full Upgrade / Rebuild', price: '₱500–700', note: 'Swapping multiple parts or transferring system to a new case' }
+        { name: 'CPU / Cooler Installation', price: '₱200', note: 'CPU replacement / standard air cooler installation' },
+        { name: 'Motherboard Installation', price: '₱300', note: 'Standard desktop motherboard installation' },
+        { name: 'Full Upgrade / Rebuild', price: '₱500–700', note: 'Multiple component upgrades or system migration' }
       ]
     },
     {
       num: '04', title: 'Other Services', desc: 'Misc fixes',
       items: [
-        { name: 'Data Backup / Transfer', price: '₱150+' },
+        { name: 'Data Backup / Transfer', price: '₱150+', note: 'Secure backup or transfer of your files' },
         { name: 'Driver / Windows Troubleshooting', price: '₱150', note: 'Fixing issues without OS reinstall' }
       ]
     }
@@ -1095,15 +1096,13 @@
     { id:'basic-care', name:'Basic Care', price:300, cat:'PC Maintenance' },
     { id:'deep-care', name:'Deep Care', price:500, cat:'PC Maintenance' },
     { id:'extreme-refresh', name:'Extreme Refresh', price:650, cat:'PC Maintenance' },
-    
-    { id:'os-refurbish', name:'OS Reinstall & Refurbish', price:250, cat:'System Services' },
+    { id:'os-reinstall', name:'OS Reinstall & Refresh', price:250, cat:'System Services' },
     { id:'diagnostic', name:'Diagnostic & Troubleshooting', price:250, cat:'System Services', isDiagnostic:true },
-    { id:'bundle-basic-os', name:'Bundle: Basic Care + OS Refurbish', price:500, cat:'System Services', isBundle:true },
-    
-    { id:'basic-install', name:'Basic Component Install', price:150, cat:'Component Installation' },
-    { id:'adv-install', name:'Advanced Component Install', price:250, cat:'Component Installation' },
+    { id:'bundle-basic-os', name:'Bundle: Basic Care + OS Refresh', price:500, cat:'System Services', isBundle:true },
+    { id:'basic-component', name:'Basic Component Install (RAM/SSD/HDD/GPU/PSU)', price:150, cat:'Component Installation' },
+    { id:'cpu-cooler', name:'CPU / Cooler Installation', price:200, cat:'Component Installation' },
+    { id:'motherboard', name:'Motherboard Installation', price:300, cat:'Component Installation' },
     { id:'full-rebuild', name:'Full Upgrade / Rebuild', price:500, priceMax:700, cat:'Component Installation' },
-    
     { id:'data-backup', name:'Data Backup / Transfer', price:150, isPlus:true, cat:'Other Services' },
     { id:'driver-troubleshoot', name:'Driver / Windows Troubleshooting', price:150, cat:'Other Services' }
   ];
@@ -1157,15 +1156,15 @@
       .map(cb => calcServices.find(s => s.id === cb.dataset.id));
 
     const hasBasic = checked.some(s => s.id === 'basic-care');
-    const hasOS = checked.some(s => s.id === 'os-refurbish');
+    const hasOS = checked.some(s => s.id === 'os-reinstall');
     const hasBundle = checked.some(s => s.id === 'bundle-basic-os');
     const tip = document.getElementById('calcTip');
     if (hasBasic && hasOS && !hasBundle) {
       tip.style.display = 'block';
-      tip.textContent = '// Tip: Select the Bundle (Basic Care + OS Refurbish) instead to save ₱50';
+      tip.textContent = '// Tip: Select the Bundle (Basic Care + OS Refresh) instead to save ₱50';
     } else if (hasBundle && (hasBasic || hasOS)) {
       tip.style.display = 'block';
-      tip.textContent = '// Note: Bundle already includes Basic Care + OS Refurbish — uncheck the individual ones';
+      tip.textContent = '// Note: Bundle already includes Basic Care + OS Refresh — uncheck the individual ones';
     } else {
       tip.style.display = 'none';
     }
